@@ -20,26 +20,10 @@ class Hero(db.Model, SerializerMixin):
     weakness = db.Column(db.String)
 
     herovillains = db.relationship('HeroVillain', back_populates='hero')
+
     villains = association_proxy('herovillains', 'villain')
 
-    serialize_rules = ('-herovillains.hero', )
-
-    # def to_dict(self):
-    #     return {
-    #         "id": self.id,
-    #         "name": self.name,
-    #         "power": self.power,
-    #         "weakness": self.weakness,
-    #         "villains": [villain.to_dict() for villain in self.villains]
-    #     }
-
-
-
-
-
-
-
-
+    serialize_rules = ('-herovillains', 'villains', '-villains.heroes', '-villains.herovillains')
 
 
 class Villain(db.Model, SerializerMixin):
@@ -52,34 +36,12 @@ class Villain(db.Model, SerializerMixin):
     childhood_trauma = db.Column(db.String)
 
     herovillains = db.relationship('HeroVillain', back_populates='villain')
+
     heroes = association_proxy('herovillains', 'hero')
 
-    serialize_rules = ('-herovillains.villain', )
+    serialize_rules = ('-herovillains.villain',)
 
-    # def to_dict_with_heroes(self):
-    #     return {
-    #         "id": self.id,
-    #         "name": self.name,
-    #         "heroes": [ hero.to_dict() for hero in self.heroes ]
-    #     }
     
-    # def to_dict(self):
-    #     return {
-    #                 "id": self.id,
-    #                 "name": self.name,
-    #             }
-    
-
-
-
-
-
-
-
-
-
-
-
 class HeroVillain(db.Model, SerializerMixin):
 
     __tablename__ = 'herovillains'
@@ -94,3 +56,4 @@ class HeroVillain(db.Model, SerializerMixin):
     villain = db.relationship('Villain', back_populates='herovillains')
 
     serialize_rules = ('-hero.herovillains', '-villain.herovillains')
+    
